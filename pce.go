@@ -7,7 +7,13 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-    gradius := games.PCEngineGame{games.Game{"Gradius", "STG"}, "4 988602 585032"}
+    gradius := &games.PCEngineGame{
+        Game: games.Game{
+            Name: "Gradius",
+            Genre: "STG",
+        },
+        Ean13: "4 988602 585032",
+    }
     fmt.Fprintf(w, gradius.ToString())
 }
 
