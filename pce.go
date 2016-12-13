@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "net/http"
 )
 
 type Game struct {
@@ -18,7 +19,12 @@ type PCEngineGame struct {
     Ean13 string
 }
 
-func main() {
+func handler(w http.ResponseWriter, r *http.Request) {
     gradius := PCEngineGame{Game{"Gradius", "STG"}, "4 988602 585032"}
-    fmt.Println(gradius.ToString())
+    fmt.Fprintf(w, gradius.ToString())
+}
+
+func main() {
+    http.HandleFunc("/", handler)
+    http.ListenAndServe(":8080", nil)
 }
