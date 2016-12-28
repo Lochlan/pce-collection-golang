@@ -2,11 +2,10 @@ package games
 
 type Game struct {
     Name string
-    Genre string
 }
 
 func (g *Game) ToString() string {
-    return g.Name + " (" + g.Genre + ")"
+    return g.Name
 }
 
 type PCEngineGame struct {

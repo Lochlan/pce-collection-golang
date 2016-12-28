@@ -10,7 +10,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
     gradius := &games.PCEngineGame{
         Game: games.Game{
             Name: "Gradius",
-            Genre: "STG",
         },
         Ean13: "4 988602 585032",
     }
