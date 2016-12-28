@@ -7,11 +7,8 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
-    gradius := &games.PCEngineGame{
-        Game: games.Game{
-            Name: "Gradius",
-        },
-        Ean13: "4 988602 585032",
+    gradius := &games.Game{
+        Name: "Gradius",
     }
     fmt.Fprintf(w, gradius.ToString())
 }
