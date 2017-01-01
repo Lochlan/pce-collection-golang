@@ -7,10 +7,10 @@ import (
 )
 
 type Game struct {
-    Id int
-    Name string
-    Slug string
-    Developer string
+    Id int `jsonapi:"primary,games"`
+    Name string `jsonapi:"attr,name"`
+    Slug string `jsonapi:"attr,slug"`
+    Developer string `jsonapi:"attr,developer"`
 }
 
 func (g *Game) ToString() string {

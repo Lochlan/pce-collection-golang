@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+    "github.com/google/jsonapi"
     "github.com/lochlan/pce-collection-golang/games"
     "net/http"
     "os"
@@ -16,8 +16,12 @@ func handler(w http.ResponseWriter, r *http.Request) {
     if requested_game == nil {
         return
     }
-    fmt.Fprintf(w, "<p>" + requested_game.ToString() + "</p>")
-    fmt.Fprintf(w, "<p>" + requested_game.Developer + "</p>")
+
+    w.WriteHeader(200)
+    w.Header().Set("Content-Type", "application/vnd.api+json")
+    if err := jsonapi.MarshalOnePayload(w, requested_game); err != nil {
+        http.Error(w, err.Error(), 500)
+    }
 }
 
 func main() {
