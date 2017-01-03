@@ -14,6 +14,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     slug := r.URL.Path[1:]
     requested_game := games.ReadGameBySlug(db, slug)
     if requested_game == nil {
+        http.Error(w, "", 404)
         return
     }
 
