@@ -11,7 +11,7 @@ var pwd, _ = os.Getwd()
 var db = games.InitDB(pwd + "/test.db")
 
 func handler(w http.ResponseWriter, r *http.Request) {
-    slug := r.URL.Path[1:]
+    slug := r.URL.Path[len("/games/"):]
     requested_game := games.ReadGameBySlug(db, slug)
     if requested_game == nil {
         http.Error(w, "", 404)
@@ -29,6 +29,6 @@ func main() {
     defer db.Close()
     games.CreateTable(db)
 
-    http.HandleFunc("/", handler)
+    http.HandleFunc("/games/", handler)
     http.ListenAndServe(":8080", nil)
 }
