@@ -14,7 +14,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
     slug := r.URL.Path[len("/games/"):]
     requested_game := games.ReadGameBySlug(db, slug)
     if requested_game == nil {
-        http.Error(w, "", 404)
+        http.Error(w, "404 page not found", 404)
         return
     }
 
