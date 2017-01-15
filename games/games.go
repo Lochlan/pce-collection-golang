@@ -7,14 +7,14 @@ import (
 )
 
 type Game struct {
-    Id int `jsonapi:"primary,games"`
-    Name string `jsonapi:"attr,name"`
-    Slug string `jsonapi:"attr,slug"`
-    Developer string `jsonapi:"attr,developer"`
+    Id *int `jsonapi:"primary,games"`
+    Name *string `jsonapi:"attr,name"`
+    Slug *string `jsonapi:"attr,slug"`
+    Developer *string `jsonapi:"attr,developer"`
 }
 
 func (g *Game) ToString() string {
-    return g.Name
+    return *g.Name
 }
 
 func InitDB(filepath string) *sql.DB {

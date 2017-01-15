@@ -19,6 +19,13 @@ func getCsvData(filepath string) [][]string {
     return records
 }
 
+func nilIfEmptyString(str string) *string {
+    if str == "" {
+        return nil
+    }
+    return &str
+}
+
 func main() {
     db := games.InitDB(pwd + "/test.db")
     defer db.Close()
@@ -34,9 +41,9 @@ func main() {
         developer := record[5]
 
         new_game := &games.Game{
-            Name: name,
-            Slug: slug,
-            Developer: developer,
+            Name: &name,
+            Slug: &slug,
+            Developer: nilIfEmptyString(developer),
         }
         games.NewGame(db, new_game)
     }
