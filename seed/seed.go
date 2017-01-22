@@ -40,11 +40,11 @@ func main() {
         // year := record[4]
         developer := record[5]
 
-        new_game := &games.Game{
+        newGame := &games.Game{
             Name: &name,
             Slug: &slug,
             Developer: nilIfEmptyString(developer),
         }
-        games.NewGame(db, new_game)
+        newGame.Save(db)
     }
 }

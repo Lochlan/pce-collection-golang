@@ -17,6 +17,27 @@ func (g *Game) ToString() string {
     return *g.Name
 }
 
+func (g *Game) LoadFromSlug(db *sql.DB) bool {
+    sqlReadBySlug := `
+    SELECT Id, Name, Developer FROM games
+    WHERE Slug=?
+    `
+
+    err := db.QueryRow(sqlReadBySlug, *g.Slug).Scan(&g.Id, &g.Name, &g.Developer)
+    if err == sql.ErrNoRows { return false }
+    if err != nil { log.Fatal(err) }
+
+    return true
+}
+
+func (g *Game) Save(db *sql.DB) {
+    if g.Id == nil {
+        createGame(db, g)
+        return
+    }
+    updateGame(db, g)
+}
+
 func InitDB(filepath string) *sql.DB {
     db, err := sql.Open("sqlite3", filepath)
     if err != nil { panic(err) }
@@ -25,7 +46,7 @@ func InitDB(filepath string) *sql.DB {
 }
 
 func CreateTable(db *sql.DB) {
-    sql_table := `
+    sqlTable := `
     CREATE TABLE IF NOT EXISTS games(
         Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         Name TEXT,
@@ -35,12 +56,12 @@ func CreateTable(db *sql.DB) {
     );
     `
 
-    _, err := db.Exec(sql_table)
+    _, err := db.Exec(sqlTable)
     if err != nil { panic(err) }
 }
 
-func NewGame(db *sql.DB, game *Game) {
-    sql_addgame := `
+func createGame(db *sql.DB, game *Game) {
+    sqlCreateGame := `
     INSERT INTO games(
         Name,
         Slug,
@@ -49,7 +70,7 @@ func NewGame(db *sql.DB, game *Game) {
     ) values(?, ?, ?, CURRENT_TIMESTAMP)
     `
 
-    stmt, err := db.Prepare(sql_addgame)
+    stmt, err := db.Prepare(sqlCreateGame)
     if err != nil { panic(err) }
     defer stmt.Close()
 
@@ -57,8 +78,8 @@ func NewGame(db *sql.DB, game *Game) {
     if err2 != nil { panic(err2) }
 }
 
-func StoreGame(db *sql.DB, games []Game) {
-    sql_addgame := `
+func updateGame(db *sql.DB, game *Game) {
+    sqlUpdateGame := `
     INSERT OR REPLACE INTO games(
         Id,
         Name,
@@ -68,14 +89,12 @@ func StoreGame(db *sql.DB, games []Game) {
     ) values(?, ?, ?, ?, CURRENT_TIMESTAMP)
     `
 
-    stmt, err := db.Prepare(sql_addgame)
+    stmt, err := db.Prepare(sqlUpdateGame)
     if err != nil { panic(err) }
     defer stmt.Close()
 
-    for _, game := range games {
-        _, err2 := stmt.Exec(game.Id, game.Name, game.Slug, game.Developer)
-        if err2 != nil { panic(err2) }
-    }
+    _, err2 := stmt.Exec(game.Id, game.Name, game.Slug, game.Developer)
+    if err2 != nil { panic(err2) }
 }
 
 func ReadGame(db *sql.DB) []Game {
@@ -96,18 +115,4 @@ func ReadGame(db *sql.DB) []Game {
         result = append(result, game)
     }
     return result
-}
-
-func ReadGameBySlug(db *sql.DB, slug string) *Game {
-    sql_readbyslug := `
-    SELECT Id, Name, Slug, Developer FROM games
-    WHERE Slug=?
-    `
-    game := &Game{}
-    err := db.QueryRow(sql_readbyslug, slug).Scan(&game.Id, &game.Name, &game.Slug, &game.Developer)
-
-    if err == sql.ErrNoRows { return nil }
-    if err != nil { log.Fatal(err) }
-
-    return game
 }
